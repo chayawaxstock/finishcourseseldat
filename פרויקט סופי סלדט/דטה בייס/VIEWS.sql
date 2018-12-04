@@ -1,5 +1,5 @@
 /*REPORT PROJECT*/
-
+DELIMITER $$
 CREATE 
     ALGORITHM = UNDEFINED 
     DEFINER = `root`@`localhost` 
@@ -38,7 +38,7 @@ VIEW `reportproject` AS
     GROUP BY `p`.`projectId`
     ORDER BY `p`.`isFinish`;
     
-    
+ DELIMITER $$   
   CREATE 
     ALGORITHM = UNDEFINED 
     DEFINER = `root`@`localhost` 
@@ -56,7 +56,7 @@ VIEW `reportworker` AS
     
     
     sumhoursforuserproject
-    
+   DELIMITER $$ 
     CREATE 
     ALGORITHM = UNDEFINED 
     DEFINER = `root`@`localhost` 

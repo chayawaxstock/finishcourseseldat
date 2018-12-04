@@ -1,3 +1,4 @@
+DELIMITER $$
 CREATE DEFINER=`root`@`localhost` TRIGGER updatePresentDay44
 BEFORE UPDATE
    ON presentday FOR EACH ROW
@@ -8,6 +9,7 @@ END;
 
 
 /*project*/
+DELIMITER $$
 CREATE DEFINER=`root`@`localhost` TRIGGER `project_before_insert` BEFORE INSERT ON `project`
 FOR EACH ROW
 BEGIN

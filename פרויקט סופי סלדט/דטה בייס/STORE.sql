@@ -1,3 +1,4 @@
+DELIMITER $$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `reportWorker`(in idWorker int)
 BEGIN
 select year(pd.timeBegin), month(pd.timeBegin),(select name from project where projectId=pd.projectId)
@@ -9,7 +10,7 @@ group by year(pd.timeBegin), month(pd.timeBegin),pd.projectId order by year(pd.t
 END
 
 
-
+DELIMITER $$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `report`(IN viewName VARCHAR(40))
 BEGIN
 SET @sql =CONCAT("SELECT * FROM ",viewName);
@@ -18,7 +19,7 @@ SET @sql =CONCAT("SELECT * FROM ",viewName);
  DEALLOCATE PREPARE stmt3;
 END
 
-
+DELIMITER $$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `departmensProject`(in Id nvarchar(5))
 BEGIN
 select d.id, d.department,pd.sumHours,(select sum(sumHours) from sumhoursforuserproject where projectId=projectId and departmentUserId=d.id )
@@ -28,7 +29,7 @@ pd.departmentId=d.id where pd.projectId=Id;
 END
 
 
-
+DELIMITER $$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `CreateReport`(in fillter NVARCHAR(20),in fillter2 NVARCHAR(20))
 BEGIN
 set @sql='SELECT
@@ -44,7 +45,7 @@ DEALLOCATE PREPARE stmt;
 END
 
 
-
+DELIMITER $$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `check_date`(IN dateBegin date, IN dateEnd date)
 BEGIN
     IF DATEDIFF(dateEnd,dateBegin)<=0 THEN
