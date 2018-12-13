@@ -1,5 +1,5 @@
 DELIMITER $$
-CREATE DEFINER=`root`@`localhost` TRIGGER updatePresentDay44
+CREATE DEFINER=`root`@`localhost` TRIGGER updatePresentDay
 BEFORE UPDATE
    ON presentday FOR EACH ROW
 /*presentday -update sumHours work every day */
@@ -19,6 +19,7 @@ IF new.dateEnd IS NOT NULL THEN
 END
 
 
+/*Adding employees under the teamLeader to a project team associated with it*/
 DELIMITER $$
 USE `managertasks`$$
 CREATE DEFINER=`root`@`localhost` TRIGGER `managertasks`.`project_BEFORE_UPDATE` BEFORE UPDATE ON `project` FOR EACH ROW
@@ -32,47 +33,44 @@ SET SQL_SAFE_UPDATES = 0;
 SET @IDPROJECT=OLD.projectId;
 set @oldmanagerId=OLD.managerId;
 
-REPLACE INTO projectworker (projectId,id) 
-SELECT @IDPROJECT,u.id from user u where u.managerId=new.managerId;
-
-
 update projectworker pw set pw.isActive=false where  pw.id in 
 (select u.id from user u where u.managerId=@oldmanagerId);
 
+REPLACE INTO projectworker (projectId,id,isActive) 
+SELECT @IDPROJECT,u.id,b'1' from user u where u.managerId=new.managerId;
 END$$
 DELIMITER ;
 
+
+/*Adding employees under the teamLeader to a project team associated with it*/
 DELIMITER $$
 USE `managertasks`$$
 CREATE DEFINER=`root`@`localhost` TRIGGER `managertasks`.`project_AFTER_INSERT` AFTER INSERT ON `project` FOR EACH ROW
 BEGIN
 
-SET @IDPROJECT=0;
-        SELECT MAX(projectId) FROM project INTO @IDPROJECT;
-       SET @IDMANAGER=NEW.managerId;
+SET @IDPROJECT=LAST_INSERT_ID();
+SET @IDMANAGER=NEW.managerId;
   
-REPLACE INTO  managertasks.projectworker (projectId,id) 
-	  SELECT @IDPROJECT,u.id  FROM managertasks.user u WHERE u.managerId=@IDMANAGER ;
+REPLACE INTO  managertasks.projectworker (projectId,id,isActive) 
+	  SELECT @IDPROJECT,u.id,b'1' FROM managertasks.user u WHERE u.managerId=@IDMANAGER ;
 END$$
 DELIMITER ;
 
 
 
 
-/*USER*/
+/*Adding employees under the teamLeader to a project team associated with it*/
 DELIMITER $$
 USE `managertasks`$$
 CREATE DEFINER=`root`@`localhost` TRIGGER insertProjectWorker
 AFTER INSERT ON `user`
       FOR EACH ROW
       BEGIN
-      SET @IDUSER=0;
-        SELECT MAX(id) FROM user INTO @IDUSER;
-       SET @IDMANAGER=NEW.managerId;
+      SET @IDUSER=LAST_INSERT_ID();
+	  SET @IDMANAGER=NEW.managerId;
   
-	  REPLACE INTO managertasks.projectworker (projectId,id) 
-	  SELECT projectId, @IDUSER FROM managertasks.project p WHERE p.managerId=@IDMANAGER ;
- 
+	  REPLACE INTO managertasks.projectworker (projectId,id,isActive) 
+	  SELECT projectId,b'1', @IDUSER FROM managertasks.project p WHERE p.managerId=@IDMANAGER ;
 END$$
 DELIMITER ;
 
@@ -88,11 +86,11 @@ SET SQL_SAFE_UPDATES = 0;
 set @oldmanagerId=OLD.managerId;
 set @id=OLD.id;
 
-update projectworker pw set pw.isActive=false where pw.id=@id and  pw.projectId in 
-(select p.projectId from managertasks.project p where p.managerId=@oldmanagerId);
+	  update projectworker pw set pw.isActive=false where pw.id=@id and  pw.projectId in 
+      (select p.projectId from managertasks.project p where p.managerId=@oldmanagerId);
 
-	  REPLACE into managertasks.projectworker (projectId,id) 
-	  select projectId, new.id from managertasks.project p where p.managerId=NEW.managerId ;
+       REPLACE into managertasks.projectworker (projectId,id,isActive) 
+	   select projectId, new.id,b'1' from managertasks.project p where p.managerId=NEW.managerId ;
 END$$
 DELIMITER ;
 

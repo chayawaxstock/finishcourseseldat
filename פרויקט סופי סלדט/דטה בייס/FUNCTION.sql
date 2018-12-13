@@ -1,3 +1,4 @@
+DELIMITER $$
 CREATE DEFINER=`root`@`localhost` FUNCTION `NullDate`(_Input DATETIME) RETURNS tinyint(1)
 BEGIN 
 IF (_Input = '0000-00-00') OR 

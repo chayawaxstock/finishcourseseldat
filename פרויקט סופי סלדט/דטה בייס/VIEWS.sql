@@ -38,6 +38,9 @@ VIEW `reportproject` AS
     GROUP BY `p`.`projectId`
     ORDER BY `p`.`isFinish`;
     
+    
+    
+    
  DELIMITER $$   
   CREATE 
     ALGORITHM = UNDEFINED 

@@ -19,6 +19,7 @@ SET @sql =CONCAT("SELECT * FROM ",viewName);
  DEALLOCATE PREPARE stmt3;
 END
 
+
 DELIMITER $$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `departmensProject`(in Id nvarchar(5))
 BEGIN
@@ -26,22 +27,6 @@ select d.id, d.department,pd.sumHours,(select sum(sumHours) from sumhoursforuser
 ,(select (select sum(sumHours) from sumhoursforuserproject where projectId=Id and departmentUserId=pd.departmentId )/
  pd.sumHours*100) as precentsDone from department d join hourfordepartment pd on
 pd.departmentId=d.id where pd.projectId=Id;
-END
-
-
-DELIMITER $$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `CreateReport`(in fillter NVARCHAR(20),in fillter2 NVARCHAR(20))
-BEGIN
-set @sql='SELECT
-                    * 
-                   FROM report';
-if(fillter>'')  then        				
- set @sql = CONCAT(@sql,' where ',fillter,'=',fillter2);
-end if;
-
-PREPARE stmt FROM @sql;
-EXECUTE stmt;
-DEALLOCATE PREPARE stmt;
 END
 
 

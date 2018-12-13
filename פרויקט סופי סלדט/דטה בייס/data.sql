@@ -1,3 +1,5 @@
+
+/* date to department table*/
 INSERT INTO managertasks.department VALUE ('manager');
 INSERT INTO managertasks.department VALUE ('teamLeader');
 INSERT INTO managertasks.department VALUE ('OA');
